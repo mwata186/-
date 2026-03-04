@@ -146,58 +146,85 @@ const now = new Date();
 let viewYear  = now.getFullYear();
 let viewMonth = now.getMonth() + 1; // 1-based
 
+// 選択日（デフォルト: 今日）
+let selYear  = now.getFullYear();
+let selMonth = now.getMonth() + 1;
+let selDay   = now.getDate();
+
+function isTodayDate(y, m, d) {
+  return y === now.getFullYear() && m === now.getMonth() + 1 && d === now.getDate();
+}
+
+function isSelectedDate(y, m, d) {
+  return y === selYear && m === selMonth && d === selDay;
+}
+
 // ─────────────────────────────────────────────
 // 描画
 // ─────────────────────────────────────────────
 function render() {
   const y = viewYear;
   const m = viewMonth;
-  const isCurrentMonth =
-    y === now.getFullYear() && m === now.getMonth() + 1;
-  const todayD = isCurrentMonth ? now.getDate() : null;
+
+  // 選択日がこの表示月にあるか
+  const selInView = selYear === y && selMonth === m;
 
   // ── タイトル
-  document.getElementById('monthTitle').textContent =
-    `${y}年${m}月`;
+  document.getElementById('monthTitle').textContent = `${y}年${m}月`;
 
   // ── 集計
   const total   = countTotalBizDays(y, m);
-  const current = isCurrentMonth ? currentBizDayNumber(y, m, todayD) : 0;
+  const current = selInView ? currentBizDayNumber(y, m, selDay) : 0;
   const rate    = total > 0 ? (current / total) : 0;
 
-  // ── 統計カード
-  const bizDayEl   = document.getElementById('currentBizDay');
-  const unitEl     = document.getElementById('currentBizDayUnit');
-  if (isCurrentMonth) {
+  // ── 統計カード（選択日に応じてラベル変更）
+  const labelEl  = document.getElementById('currentBizDayLabel');
+  const bizDayEl = document.getElementById('currentBizDay');
+  const unitEl   = document.getElementById('currentBizDayUnit');
+
+  if (selInView) {
     bizDayEl.textContent = current;
     unitEl.textContent   = '営業日目';
+    if (isTodayDate(selYear, selMonth, selDay)) {
+      labelEl.textContent = '今日の営業日';
+    } else {
+      labelEl.textContent = `${selDay}日の営業日`;
+    }
   } else {
     bizDayEl.textContent = '-';
-    unitEl.textContent   = '（今月以外）';
+    labelEl.textContent  = '選択日の営業日';
+    unitEl.textContent   = '（この月に未選択）';
   }
   document.getElementById('totalBizDays').textContent = total;
 
   // ── 進捗
-  const pct = isCurrentMonth ? Math.round(rate * 1000) / 10 : 0;
-  document.getElementById('progressPercent').textContent = isCurrentMonth ? `${pct}%` : '-';
-  document.getElementById('progressBar').style.width = isCurrentMonth ? `${pct}%` : '0%';
-  document.getElementById('progressDetail').textContent =
-    isCurrentMonth
-      ? `${current} / ${total} 営業日`
-      : `全 ${total} 営業日`;
+  const pct = selInView ? Math.round(rate * 1000) / 10 : 0;
+  document.getElementById('progressPercent').textContent = selInView ? `${pct}%` : '-';
+  document.getElementById('progressBar').style.width     = selInView ? `${pct}%` : '0%';
+  document.getElementById('progressDetail').textContent  = selInView
+    ? `${current} / ${total} 営業日`
+    : `全 ${total} 営業日`;
+
+  // ── 今日に戻るボタン（今日が選択済み & 今月表示なら非表示）
+  const atToday = isTodayDate(selYear, selMonth, selDay)
+    && y === now.getFullYear() && m === now.getMonth() + 1;
+  document.getElementById('todayBtn').classList.toggle('hidden', atToday);
 
   // ── カレンダー
-  renderCalendar(y, m, todayD);
+  renderCalendar(y, m);
 }
 
-function renderCalendar(y, m, todayD) {
+function renderCalendar(y, m) {
   const grid = document.getElementById('calendarGrid');
   grid.innerHTML = '';
 
-  const firstDow = new Date(y, m - 1, 1).getDay(); // 0=Sun
-  // 月曜始まりに変換 (月=0, …, 日=6)
-  const startOffset = (firstDow + 6) % 7;
-  const last = daysInMonth(y, m);
+  const firstDow    = new Date(y, m - 1, 1).getDay();
+  const startOffset = (firstDow + 6) % 7; // 月曜始まり
+  const last        = daysInMonth(y, m);
+
+  // 実際の今日（薄表示の基準として使用）
+  const realTodayInView = y === now.getFullYear() && m === now.getMonth() + 1;
+  const realTodayD = realTodayInView ? now.getDate() : null;
 
   // 空セル
   for (let i = 0; i < startOffset; i++) {
@@ -207,23 +234,25 @@ function renderCalendar(y, m, todayD) {
   }
 
   for (let d = 1; d <= last; d++) {
-    const cell  = document.createElement('div');
-    const dow   = new Date(y, m - 1, d).getDay();
-    const isSat = dow === 6;
-    const isSun = dow === 0;
-    const isHol = isHoliday(y, m, d);
-    const hName = holidayName(y, m, d);
-    const isBiz = isBusinessDay(y, m, d);
-    const isToday = todayD === d;
-    const isPast  = todayD !== null && d < todayD && isBiz;
+    const cell    = document.createElement('div');
+    const dow     = new Date(y, m - 1, d).getDay();
+    const isSat   = dow === 6;
+    const isSun   = dow === 0;
+    const isHol   = isHoliday(y, m, d);
+    const hName   = holidayName(y, m, d);
+    const isBiz   = isBusinessDay(y, m, d);
+    const isTdy   = isTodayDate(y, m, d);
+    const isSel   = isSelectedDate(y, m, d);
+    const isPast  = realTodayD !== null && d < realTodayD && isBiz;
 
     let cls = 'cal-cell';
-    if (isToday)        cls += ' today';
-    else if (isSat)     cls += ' saturday';
+    if (isTdy)              cls += ' today';
+    else if (isSel)         cls += ' selected';
+    else if (isSat)         cls += ' saturday';
     else if (isSun || isHol) cls += ' holiday';
-    else if (isBiz)     cls += ' bizday';
+    else if (isBiz)         cls += ' bizday';
 
-    if (!isToday && isPast) cls += ' past-bizday';
+    if (!isTdy && !isSel && isPast) cls += ' past-bizday';
 
     cell.className = cls;
 
@@ -237,11 +266,14 @@ function renderCalendar(y, m, todayD) {
       hnEl.className = 'holiday-name';
       hnEl.textContent = hName;
       cell.appendChild(hnEl);
-    }
-
-    if (hName) {
       cell.title = hName;
     }
+
+    // クリックで選択日を変更
+    cell.addEventListener('click', () => {
+      selYear = y; selMonth = m; selDay = d;
+      render();
+    });
 
     grid.appendChild(cell);
   }
@@ -259,6 +291,15 @@ document.getElementById('prevBtn').addEventListener('click', () => {
 document.getElementById('nextBtn').addEventListener('click', () => {
   viewMonth++;
   if (viewMonth > 12) { viewMonth = 1; viewYear++; }
+  render();
+});
+
+document.getElementById('todayBtn').addEventListener('click', () => {
+  viewYear  = now.getFullYear();
+  viewMonth = now.getMonth() + 1;
+  selYear   = now.getFullYear();
+  selMonth  = now.getMonth() + 1;
+  selDay    = now.getDate();
   render();
 });
 
