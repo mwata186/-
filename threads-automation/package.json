@@ -1,0 +1,24 @@
+{
+  "name": "threads-automation",
+  "version": "1.0.0",
+  "description": "6エージェントによるThreads完全自動投稿システム",
+  "main": "agents/poster.js",
+  "type": "commonjs",
+  "scripts": {
+    "daily": "bash scripts/run-daily.sh",
+    "poster": "node agents/poster.js",
+    "writer": "node agents/writer.js",
+    "analyst": "node agents/analyst.js",
+    "researcher": "node agents/researcher.js",
+    "fetcher": "node agents/fetcher.js",
+    "supervisor": "node agents/supervisor.js",
+    "kill": "bash scripts/kill-switch.sh"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.36.3",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "node-cron": "^3.0.3",
+    "youtube-transcript": "^1.2.1"
+  }
+}

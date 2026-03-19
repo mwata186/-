@@ -1,0 +1,10 @@
+{
+  "accounts": [
+    {
+      "id": "career",
+      "name": "転職・キャリアアカウント",
+      "active": true,
+      "knowledgePath": "knowledge/accounts/career.json"
+    }
+  ]
+}

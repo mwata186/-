@@ -1,0 +1,17 @@
+{
+  "accountId": "career",
+  "niche": "転職・キャリア",
+  "persona": {
+    "tone": "フレンドリー・断言的・共感的。タメ語OK。絵文字は控えめに。",
+    "ngWords": ["詐欺", "必ず稼げる", "絶対に", "保証します", "ギャンブル"],
+    "targetAge": "25-35歳",
+    "targetGender": "男女問わず",
+    "targetConcern": "転職失敗・年収不満・ブラック企業・面接苦手・エージェントへの不信感",
+    "authorityBackground": "転職経験者・HR業界10年・年収2倍達成済み"
+  },
+  "keywords": ["転職", "年収交渉", "面接", "転職エージェント", "ブラック企業", "キャリア", "履歴書", "職務経歴書", "内定", "退職"],
+  "accountRef": {
+    "threadsUserId": "${THREADS_USER_ID}",
+    "threadsAccessToken": "${THREADS_ACCESS_TOKEN}"
+  }
+}

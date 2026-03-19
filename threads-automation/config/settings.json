@@ -1,0 +1,15 @@
+{
+  "maxPostsPerDay": 15,
+  "minIntervalHours": 1,
+  "qualityThreshold": 7.0,
+  "similarityThreshold": 0.85,
+  "maxRewrites": 2,
+  "historyWindow": 100,
+  "patternRepeatLimit": 3,
+  "themeRepeatLimit": 3,
+  "errorStrikeLimit": 3,
+  "targetPostsPerBatch": 10,
+  "cronSchedule": "0 8,10,12,14,16,18,20,21,22,23 * * *",
+  "researchKeywordsPerTheme": 3,
+  "youtubeMaxResults": 5
+}

@@ -1,0 +1,21 @@
+{
+  "転職準備": {
+    "自己分析": { "coverage": 0.0, "lastResearched": null, "notes": [] },
+    "履歴書・職務経歴書": { "coverage": 0.0, "lastResearched": null, "notes": [] },
+    "面接対策": { "coverage": 0.0, "lastResearched": null, "notes": [] },
+    "年収交渉": { "coverage": 0.0, "lastResearched": null, "notes": [] }
+  },
+  "転職エージェント活用": {
+    "エージェントの選び方": { "coverage": 0.0, "lastResearched": null, "notes": [] },
+    "エージェントとのやり取り": { "coverage": 0.0, "lastResearched": null, "notes": [] },
+    "エージェントの罠・注意点": { "coverage": 0.0, "lastResearched": null, "notes": [] }
+  },
+  "ブラック企業対策": {
+    "ブラック企業の見分け方": { "coverage": 0.0, "lastResearched": null, "notes": [] },
+    "退職の進め方": { "coverage": 0.0, "lastResearched": null, "notes": [] }
+  },
+  "キャリア設計": {
+    "市場価値の上げ方": { "coverage": 0.0, "lastResearched": null, "notes": [] },
+    "スキルアップ戦略": { "coverage": 0.0, "lastResearched": null, "notes": [] }
+  }
+}
